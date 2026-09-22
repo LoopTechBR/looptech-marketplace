@@ -1,0 +1,16 @@
+{
+  "name": "@looptech/opencode-plugin",
+  "version": "0.8.0",
+  "description": "LoopTech OpenCode plugin - workflow & expert skills",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode/plugin": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

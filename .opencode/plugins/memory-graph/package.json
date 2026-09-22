@@ -1,0 +1,16 @@
+{
+  "name": "@looptech/memory-graph-opencode-plugin",
+  "version": "0.3.3",
+  "description": "Memory Graph OpenCode plugin - Obsidian vault memory with semantic search",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode/plugin": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "memory-graph",
+  "version": "0.3.3",
+  "description": "Memória de projeto num vault Obsidian — escrita pelo obsidian CLI, recall semântico + travessia de [[links]] 100% on-device (fastembed + sqlite-vec), zero nuvem. Traz as skills memory-vault (protocolo diário) e memory-vault-setup (criação do vault + migração da memória legada).",
+  "author": {
+    "name": "LoopTech"
+  },
+  "repository": "https://github.com/LoopMed/looptech-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "obsidian",
+    "vault",
+    "semantic-search",
+    "sqlite-vec",
+    "fastembed",
+    "local-first"
+  ],
+  "opencode": {
+    "plugin": "./.opencode/plugins/memory-graph/index.ts"
+  },
+  "mcpServers": {
+    "memory-graph": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "-c",
+        "set -euo pipefail; root=\"${PLUGIN_ROOT:-}\"; if [ -z \"$root\" ] || [ ! -d \"$root/memory_graph\" ]; then for cand in \"$HOME\"/.omp/plugins/cache/plugins/*memory-graph*/ \"$HOME\"/.cursor/plugins/cache/*/memory-graph/*/ \"$HOME\"/.claude/plugins/cache/*/*/memory-graph/ \"$HOME\"/.claude/plugins/cache/*/*/plugins/memory-graph/; do if [ -d \"${cand}memory_graph\" ]; then root=\"${cand%/}\"; break; fi; done; fi; if [ -z \"$root\" ]; then echo \"memory-graph MCP: plugin root not found\" >&2; exit 1; fi; exec bash \"$root/scripts/serve.sh\""
+      ],
+      "env": {
+        "PLUGIN_ROOT": "${PLUGIN_ROOT}",
+        "MEMORY_GRAPH_DIR": "${MEMORY_GRAPH_DIR}"
+      }
+    }
+  }
+}

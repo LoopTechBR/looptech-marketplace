@@ -6,9 +6,9 @@ de tarefas de dev (brainstorm → `/goals` → spec/plan → impl async → revi
 e um conjunto de **skills expert** por stack/eixo, reutilizáveis em qualquer
 projeto — LoopMed, LoopCRM ou um projeto futuro X/Y.
 
-O mesmo repositório instala em **Claude Code**, **Codex**, **Cursor** e **omp**. Cada
+O mesmo repositório instala em **Claude Code**, **Codex**, **Cursor**, **omp** e **OpenCode V2**. Cada
 host lê o catálogo dele (`.claude-plugin/`, `.agents/plugins/`, `.cursor-plugin/`,
-`.omp-plugin/`); a implementação em `plugins/` é única.
+`.omp-plugin/`, `.opencode-plugin/`); a implementação em `plugins/` é única.
 
 A regra de ouro: **o plugin carrega processo e disciplina transferível; o Project
 Profile de cada projeto (`CLAUDE.md` e `AGENTS.md`) carrega os fatos concretos**
@@ -167,6 +167,7 @@ a instalação por si só não recarrega uma sessão já aberta.
 | Codex | `$init` |
 | Cursor | `/init` |
 | omp | `/skill:init` (e, antes de qualquer spawn, `looptech:omp-setup` — ver aviso acima) |
+| OpenCode V2 | `opencode run --model opencode/claude-sonnet-5 "/skill init"` ou `/looptech:init` via command |
 
 A skill `looptech:init` faz o setup guiado do zero ao pronto — detecta os sub-projetos e
 gera o **Project Profile** no `CLAUDE.md` **e** no `AGENTS.md`, configura a conexão de
@@ -181,6 +182,121 @@ novo (memory-graph) tiver sido adicionado.
 > 100% local. Claude: `/plugin install memory-graph@looptech`. Codex/Cursor: instale
 > `memory-graph` do mesmo marketplace (ou o symlink local acima). O `init` te guia por
 > ele também.
+
+### OpenCode V2
+
+O OpenCode V2 não tem marketplace nativo — plugins são carregados via `opencode.json`.
+Este repositório inclui a estrutura `.opencode/plugins/` compatível.
+
+**Instalação local (recomendado para desenvolvimento):**
+
+```bash
+# Clone o repositório
+git clone https://github.com/LoopTechBR/looptech-marketplace.git
+
+# No seu projeto, adicione ao opencode.json:
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "/caminho/para/looptech-marketplace/.opencode/plugins/looptech",
+    "/caminho/para/looptech-marketplace/.opencode/plugins/memory-graph"
+  ],
+  "agents": {
+    "plan": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/plan.md"
+    },
+    "review": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/review.md"
+    },
+    "expert-security": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-security.md"
+    },
+    "expert-backend-go": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-backend-go.md"
+    },
+    "expert-backend-python": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-backend-python.md"
+    },
+    "expert-frontend-react": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-frontend-react.md"
+    },
+    "expert-frontend-vue": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-frontend-vue.md"
+    },
+    "expert-frontend-pwa": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-frontend-pwa.md"
+    },
+    "expert-frontend-web": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-frontend-web.md"
+    },
+    "expert-database": {
+      "model": "opencode/claude-sonnet-5",
+      "mode": "subagent",
+      "system": "/caminho/para/looptech-marketplace/plugins/looptech/agents/expert-database.md"
+    }
+  }
+}
+```
+
+**Copiar para o projeto (para distribuição):**
+
+```bash
+# No seu projeto:
+mkdir -p .opencode/plugins
+cp -r /caminho/para/looptech-marketplace/.opencode/plugins/looptech .opencode/plugins/
+cp -r /caminho/para/looptech-marketplace/.opencode/plugins/memory-graph .opencode/plugins/
+# Depois adicione ao seu opencode.json (veja acima)
+```
+
+**Componentes disponíveis no OpenCode:**
+
+| Tipo | Disponíveis |
+|---|---|
+| **Skills** | `workflow-dev`, `init`, `expert-backend-go`, `expert-backend-python`, `expert-frontend-react`, `expert-frontend-vue`, `expert-frontend-pwa`, `expert-frontend-web`, `expert-database`, `expert-security`, `memory-vault`, `memory-vault-setup` |
+| **Commands** | `looptech:init`, `looptech:workflow-dev`, `memory-graph:setup` |
+| **Agents** | `plan`, `review`, `expert-security`, `expert-backend-go`, `expert-backend-python`, `expert-frontend-react`, `expert-frontend-vue`, `expert-frontend-pwa`, `expert-frontend-web`, `expert-database` |
+| **MCP** | `memory-graph` (semantic search + graph traversal) |
+
+**Como usar no OpenCode:**
+
+```bash
+# Listar skills
+opencode skill list
+
+# Usar uma skill
+opencode run --model opencode/claude-sonnet-5 "/skill workflow-dev"
+
+# Usar comando
+opencode run --model opencode/claude-sonnet-5 "/looptech:init"
+
+# Spawnar agente
+opencode run --model opencode/claude-sonnet-5 --agent expert-backend-go "implementar feature X"
+
+# MCP memory-graph
+opencode mcp list  # mostra memory-graph conectado
+```
+
+> ⚠️ **Nota:** O OpenCode V2 usa `opencode.json` (ou `.opencode/opencode.json`) para configuração.
+> O arquivo `opencode.json` na raiz deste repo já tem a configuração pronta para desenvolvimento local.
+> Para usar em outro projeto, copie os plugins e o bloco `agents` para o `opencode.json` do projeto.
 
 ## Como um projeto adota o plugin
 
@@ -266,11 +382,18 @@ Um único `plugins/` e um catálogo por host — o mesmo padrão do marketplace 
 .agents/plugins/marketplace.json    # Codex
 .cursor-plugin/marketplace.json     # Cursor
 .omp-plugin/marketplace.json        # omp (opcional — omp cai no .claude-plugin/ como fallback)
+.opencode-plugin/marketplace.json   # OpenCode V2 (catálogo do marketplace)
+.opencode/                          # OpenCode V2 (config + plugins locais)
+  opencode.json                     # Configuração pronta para dev local
+  plugins/
+    looptech/                       # Plugin OpenCode: skills + commands
+    memory-graph/                   # Plugin OpenCode: skills + commands + MCP
 plugins/
   looptech/
     .claude-plugin/plugin.json
     .codex-plugin/plugin.json
     .cursor-plugin/plugin.json
+    .opencode-plugin/plugin.json    # Manifesto OpenCode
     commands/                       # slash commands (Cursor: /init, /workflow-dev; omp: /skill:omp-setup)
     agents/                         # agentes nomeados (experts + plan + review + security)
     skills/
@@ -278,6 +401,8 @@ plugins/
     .claude-plugin/plugin.json
     .codex-plugin/plugin.json
     .cursor-plugin/plugin.json
+    .omp-plugin/plugin.json
+    .opencode-plugin/plugin.json    # Manifesto OpenCode
     .mcp.json                       # Claude + Codex
     mcp.json                        # Cursor
     scripts/serve.sh                # stdio MCP, independente de CLAUDE_PLUGIN_ROOT
