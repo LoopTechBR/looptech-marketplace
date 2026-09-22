@@ -1,0 +1,69 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "/home/renan/src/looptech-marketplace/.opencode/plugins/looptech",
+    "/home/renan/src/looptech-marketplace/.opencode/plugins/memory-graph"
+  ],
+  "agents": {
+    "plan": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Creates the spec, plan, and /goals for a feature. Reads Project Profile, maps blast radius, writes spec/plan/goals to specs_dir.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/plan.md"
+    },
+    "review": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Reviews implementation for correctness — compiles, tests pass, matches spec/plan, no regressions, no over-engineering. Emits CHANGES-REQUESTED or APPROVED.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/review.md"
+    },
+    "expert-security": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Defensive security review of the diff — attack surface, threat model, damage table, repo scanners, allowlist from Anthropic Cybersecurity Skills. Readonly, no exploit.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-security.md"
+    },
+    "expert-backend-go": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Go backend expert — layered/hexagonal architecture, sqlx discipline (query consts, zero SELECT *, parametrization), test pyramid (unit + integration + injection), lint only-new-issues, security by principle (ownership, financial locks, env gating).",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-backend-go.md"
+    },
+    "expert-backend-python": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Python backend expert — Clean + Hexagonal (Ports & Adapters via ABC), pure domain without ORM/Pydantic, SQLAlchemy async discipline (select() typed, zero SELECT *, bound params only, text() only with :param, flush in repo — commit at edge), test pyramid (unit with mocked ports + integration with testcontainers + injection), ruff + mypy strict gates, security by principle (ownership, transactional locks, env gating).",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-backend-python.md"
+    },
+    "expert-frontend-react": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: React + TypeScript frontend expert — component architecture, testable hooks, strict TS, vitest + RTL focused on visible behavior, E2E Playwright per /goal of UI, CSP and client-side security.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-frontend-react.md"
+    },
+    "expert-frontend-vue": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Vue 3 + TypeScript frontend expert — SFCs with <script setup>, testable composables, strict TS, vitest + Vue Testing Library, E2E Playwright per /goal of UI, CSP and client-side security.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-frontend-vue.md"
+    },
+    "expert-frontend-pwa": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: UX mobile-first expert — mobile-first layout, touch targets ≥ 44px, thumb density/ergonomics, perceived performance, offline-tolerant behavior. Assumes engineering skill covers architecture/TS/tests.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-frontend-pwa.md"
+    },
+    "expert-frontend-web": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: UX web-first/desktop expert — dense layouts, hover and keyboard shortcuts, tables/grids for large screens, operator/admin flows. Assumes engineering skill covers architecture/TS/tests.",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-frontend-web.md"
+    },
+    "expert-database": {
+      "model": "opencode/claude-sonnet-5",
+      "description": "LoopTech agent: Database discipline — query consts, zero SELECT *, parametrization, null.T, injection tests + operational execution flow (preflight connection → live discovery of tables/schemas/indexes → sargable query → execution), production gate and migrations by existence (not by version).",
+      "mode": "subagent",
+      "system": "/home/renan/src/looptech-marketplace/plugins/looptech/agents/expert-database.md"
+    }
+  }
+}
